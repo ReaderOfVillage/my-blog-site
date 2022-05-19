@@ -1,0 +1,60 @@
+import React, { useEffect, useState } from 'react'
+import Axios from 'axios'
+import moment from 'moment'
+import { useNavigate } from 'react-router-dom'
+import { auth } from '../firebase-config'
+
+function GetPosts({ isAuth, auth }) {
+  const [listOfBlogs, setListOfBlogs] = useState([])
+  let navigate = useNavigate();
+  const user = localStorage.getItem("user")
+
+  useEffect(() => {
+    Axios.get("https://blog-site-portfolio.herokuapp.com/read")
+      .then((response) => {
+        setListOfBlogs(response.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [listOfBlogs])
+
+  const deletePost = (id) => {
+    Axios.delete(`https://blog-site-portfolio.herokuapp.com/delete/${id}`)
+  }
+
+  const updatePost = (id) => {
+    const newPost = prompt("Enter the new post: ")
+
+    Axios.put("https://blog-site-portfolio.herokuapp.com/update", { newPost: newPost, id: id }).then(() => {
+      setListOfBlogs(listOfBlogs.map((val) => {
+        return val._id == id ? {_id: id, title: val.title, description: newPost} : val
+      }))
+    })
+  }
+
+  return (
+    <div className="homePage">
+        {listOfBlogs.map((val) => {
+          return <div className="post">
+          <div className="postHeader">
+            <div>
+              <h1 className="title">{val.title}</h1>
+            </div>
+            <div className="deletePost">
+              { isAuth && val.user === user && (<button onClick={() => {deletePost(val._id)}}> &#128465; </button>)}
+            </div>
+            <div className="updatePost">
+              { isAuth && val.user === user && (<button onClick={() => {updatePost(val._id)}}> Edit </button>)}
+            </div>
+          </div>
+          <div className="postTextContainer"> {val.description} </div>
+          <h3>@{val.user}</h3>
+          <h5>{moment(val.date).format('MMMM Do YYYY, h:mm:ss a')}</h5>
+        </div>
+          })}
+    </div>
+  )
+}
+
+export default GetPosts
