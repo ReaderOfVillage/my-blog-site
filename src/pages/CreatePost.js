@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Axios from 'axios'
-// import '../App.css';
-import moment from 'moment'
 import { auth } from '../firebase-config';
 import { useNavigate } from 'react-router-dom'
 
@@ -9,12 +7,10 @@ function CreatePost({ isAuth }) {
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [listOfBlogs, setListOfBlogs] = useState([])
 
   const publishBlog = () => {
     Axios.post('https://blog-site-portfolio.herokuapp.com/makePost', { title: title, description: description, user: String(auth.currentUser.displayName), date: new Date })
       .then(() => {
-        console.log("It worked")
         navigate('/posts')
       })
       .catch((err) => {

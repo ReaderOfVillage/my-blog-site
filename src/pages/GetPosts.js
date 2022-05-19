@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Axios from 'axios'
-import moment from 'moment'
-import { useNavigate } from 'react-router-dom'
-import { auth } from '../firebase-config'
 
-function GetPosts({ isAuth, auth }) {
+function GetPosts({ isAuth }) {
   const [listOfBlogs, setListOfBlogs] = useState([])
-  let navigate = useNavigate();
   const user = localStorage.getItem("user")
 
   useEffect(() => {
@@ -50,7 +46,7 @@ function GetPosts({ isAuth, auth }) {
           </div>
           <div className="postTextContainer"> {val.description} </div>
           <h3>@{val.user}</h3>
-          <h5>{moment(val.date).format('MMMM Do YYYY, h:mm:ss a')}</h5>
+          <h5>{val.date}</h5>
         </div>
           })}
     </div>
